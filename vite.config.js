@@ -56,11 +56,13 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
+    base: './',
     root: join(projectRoot, "client"),
     envDir: projectRoot,
     plugins: [react(), siteStylesheet(env.VITE_SITE_CSS)],
     server: { proxy },
     build: {
+      minify: false,
       outDir: join(projectRoot, "dist"),
       emptyOutDir: true,
     },
