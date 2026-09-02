@@ -135,14 +135,14 @@ const seeWithCamera = {
     },
   },
   createHandler: ({ addConversationItem }) => async () => {
-    const response = await fetch(`${CAR_ENDPOINT}api/visual`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({}),
-    });
+    // GET /api/visual 只拍照，返回 { image: base64 JPEG }。
+    // 同一路由的 POST 是老路径：带 prompt 交给 Dify 视觉工作流、返回文字分析。
+    // 那条留着没动，但这里不用——原生图像输入比读转述强。
+    const response = await fetch(`${CAR_ENDPOINT}api/visual`);
 
-    // 拿不到 JSON 说明根本没到小车服务（代理报错、地址配错之类）。
-    // 不挡一下的话 .json() 直接抛，工具调用整个失败、模型无话可说。
+    // 拿不到 JSON 说明根本没到小车服务（代理报错、地址配错，或者小车还跑着
+    // 没有 GET 入口的旧固件）。不挡一下的话 .json() 直接抛，工具调用整个
+    // 失败、模型无话可说。
     const body = await response.text();
     let data;
     try {
@@ -151,10 +151,8 @@ const seeWithCamera = {
       return { error: `摄像头服务没有正常响应（${response.status}）：${body}` };
     }
 
-    // 小车侧 /api/visual 现在返回 { image: base64 JPEG }。
-    // 没有 image 的情况有两种：拍照报错（{ error }），或者小车还跑着
-    // 改造前的版本、返回的是 Dify 视觉工作流那段转述文字。两种都原样
-    // 交回给模型——它能把错误说出来，也能读那段文字。
+    // 没有 image 就是拍照失败，小车侧会给 { error: "拍照失败：..." }。
+    // 原样交回给模型，它能把这句话说出来。
     if (!data?.image) {
       return data;
     }
