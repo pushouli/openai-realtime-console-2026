@@ -1,0 +1,1217 @@
+:root {
+    --primary-color: #151426;
+    --highLight-bg: #f7f7fa;
+    --user-sp-bg: #fff;
+    --user-sp-border-color: #ddd;
+    --main-bg-img: url('../assets/main-bg2.png');
+    --right-bg-img: url('../assets/main-bg0.png');
+    --main-bg-img_portrait: url('../assets/main-bg3.png');
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+@mixin conversation-item($bg-color, $border-color) {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 20px;
+
+    .speaker-content {
+        max-width: 90%;
+        display: flex;
+        align-items: flex-end;
+
+        &_bd {
+            background-color: $bg-color;
+            border: 1px $border-color solid;
+            border-radius: 4px;
+            padding: 5px 15px;
+            font-size: 1.2em;
+            word-wrap: break-word;
+        }
+    }
+
+    .speaker {
+        position: relative;
+        color: #555;
+        font-size: 1.1em;
+
+        &:first-letter {
+            text-transform: uppercase;
+        }
+
+        &.user {
+            text-align: end;
+        }
+    }
+
+    &.assistant {
+        align-items: flex-start;
+    }
+
+    &.user {
+        align-items: flex-end;
+
+        .speaker-content {
+            flex-direction: row-reverse;
+        }
+    }
+}
+
+@mixin primary-button($-width, $-height, $ico-width, $ico-height) {
+    width: $-width;
+    height: $-height;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #fff;
+    --start-btn_bg: #25792b;
+    --start-btn_bg_hover: #63a268;
+    --end-btn_bg: #9b0000;
+    --end-btn_bg_hover: #e25a5a;
+
+    .icon {
+        margin: 0;
+
+        svg {
+            display: block;
+            width: $ico-width;
+            height: $ico-height;
+        }
+    }
+
+    .label {
+        display: none;
+    }
+}
+
+@keyframes o1 {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(156, 255, 14, 0) inset;
+    }
+
+    50% {
+        box-shadow: 0 0 30px 0 rgba(0, 0, 0, 1), 0 0 100px 0 rgba(156, 255, 14, 1) inset;
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(156, 255, 14, 0) inset;
+    }
+}
+
+@keyframes connecting-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 等待连接时对话区里跳动的三个点 */
+@keyframes connecting-dot {
+    0%, 80%, 100% {
+        opacity: 0.2;
+    }
+
+    40% {
+        opacity: 1;
+    }
+}
+
+@keyframes o2 {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(255, 0, 0, 0) inset;
+    }
+
+    50% {
+        box-shadow: 0 0 30px 0 rgba(0, 0, 0, 1), 0 0 var(--shadow-size2) 0 rgba(255, 0, 0, 1) inset;
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.5), 0 0 0 0 rgba(255, 0, 0, 0) inset;
+    }
+}
+
+@mixin sound-wave($sw-bg-color_01, $sw-bgcolor_02, $sw-height) {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    height: $sw-height;
+    background-image: linear-gradient(to bottom, rgba($sw-bg-color_01, 0), rgba($sw-bgcolor_02, 0.3));
+}
+
+@mixin profile-pic($profile-height, $profile-widht, $profile-bg) {
+    height: $profile-height;
+    width: $profile-widht;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #ffc541;
+    animation: $profile-bg 3s linear infinite;
+
+    img {
+        display: block;
+        height: 100%;
+        width: 100%;
+    }
+}
+
+
+@mixin main-bg($img-url) {
+    background-image: $img-url;
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-size: 100% auto;
+}
+
+[data-component=Button] {
+    font-family: unset !important;
+}
+
+@mixin app-dash-content_center {
+    right: 50%;
+    bottom: 60px;
+    transform: translateX(50%);
+
+    .app-button {
+        .btn-text {
+            color: rgba(255, 255, 255, 0.65);
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        &:hover {
+            .btn-text {
+                color: #fff;
+            }
+        }
+    }
+}
+
+[data-component='ConsolePage'] {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin: 0px;
+
+
+    .spacer {
+        flex: 0;
+    }
+
+    .content-main {
+        flex: 1 0 0%;
+        display: flex;
+        overflow: hidden;
+
+        @media screen and (orientation: portrait) {
+            flex-direction: column;
+        }
+
+        .content-block {
+            max-height: 100%;
+            width: 100%;
+            background-color: var(--highLight-bg);
+            overflow: auto;
+
+            .content-block-title {
+                display: none;
+            }
+
+            .content-block-body {
+                height: 100%;
+                color: var(--primary-color);
+                position: relative;
+                padding: 30px;
+                line-height: 2em;
+                overflow: auto;
+
+                &.full {
+                    padding: 0px;
+                }
+            }
+        }
+
+        .content-right {
+            flex: 1 0 auto;
+            position: relative;
+            background-color: #151426;
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                z-index: 0;
+                @include main-bg(var(--main-bg-img));
+            }
+
+            .content-actions {
+                flex-grow: 1;
+                flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: absolute;
+                left: 50%;
+                transform: translate(-50%, 0);
+                z-index: 1000;
+
+                button {
+                    @include primary-button(12vmin, 12vmin, 7vmin, 7vmin);
+                    --shadow-size2: 50px;
+
+                    &.disconnected:not([disabled]) {
+                        background-color: var(--start-btn_bg);
+                        animation: o1 3s linear infinite;
+
+                        &:hover {
+                            background-color: var(--start-btn_bg_hover);
+                        }
+                    }
+
+                    &.connected {
+                        background-color: var(--end-btn_bg);
+                        animation: o2 3s linear infinite;
+
+                        &:hover {
+                            background-color: var(--end-btn_bg_hover);
+                        }
+                    }
+
+                }
+
+                /* 握手中的提示。独立于按钮之上——按钮要一直保持"可挂断"的样子，
+                   状态和操作混在一个元素上会让人不敢点 */
+                .connecting-indicator {
+                    position: absolute;
+                    bottom: 100%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    margin-bottom: 14px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    white-space: nowrap;
+                    font-size: 14px;
+                    color: rgba(255, 255, 255, 0.75);
+                    pointer-events: none;
+
+                    .spinner {
+                        width: 15px;
+                        height: 15px;
+                        border: 2px solid rgba(255, 255, 255, 0.25);
+                        border-top-color: rgba(255, 255, 255, 0.9);
+                        border-radius: 50%;
+                        animation: connecting-spin 0.8s linear infinite;
+                    }
+                }
+
+                .toggle-btn {
+                    display: none;
+                    pointer-events: none;
+                }
+            }
+
+            &:first-child {
+                button {
+                    @include primary-button(20vmin, 20vmin, 10vmin, 10vmin);
+                }
+            }
+
+            .app-dash-content {
+                position: absolute;
+                right: 30px;
+                bottom: 30px;
+                display: flex;
+                align-items: center;
+                z-index: 1000;
+
+                @media screen and (orientation: portrait) {
+                    @include app-dash-content_center;
+                }
+
+                .app-button {
+                    color: rgba(255, 255, 255, 0.7);
+                    z-index: 1000;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    cursor: pointer;
+                    margin-right: 20px;
+                    min-width: 50px;
+                    width: auto;
+                    height: auto;
+                    background: none;
+                    border: none;
+
+                    &:last-child {
+                        margin-right: 0;
+                    }
+
+                    &:hover {
+                        color: #fff;
+                    }
+
+                    .btn-icon {
+                        display: block;
+                        width: 32px;
+                        height: 32px;
+                        background: #383746;
+                        border-radius: 50%;
+                        padding: 6px;
+                        margin-bottom: 6px;
+                        color: rgba(255, 255, 255, 1);
+
+                        svg {
+                            display: block;
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+
+                    &.mic-button,
+                    &.spk-button {
+                        .btn-icon {
+                            color: #fff;
+                        }
+
+                        &.mic-on,
+                        &.spk-on {
+                            .btn-icon {
+                                background: #25792b;
+                            }
+                        }
+
+                        &.mic-off,
+                        &.spk-off {
+                            .btn-icon {
+                                background: #9b0000;
+                            }
+                        }
+                    }
+
+                    &.tools-button {
+                        .btn-icon svg {
+                            stroke: currentColor;
+                            stroke-width: 2;
+                        }
+                    }
+                }
+
+                @media screen and (orientation: portrait) {
+                    .app-button {
+                        margin-right: 5px;
+
+                        .btn-icon {
+                            margin-bottom: 3px;
+                        }
+
+                        .btn-text {
+                            font-size: 0.8em;
+                        }
+                    }
+                }
+            }
+
+            @media screen and (orientation: portrait) {
+                //竖屏
+                gap: 0;
+
+                &::after {
+                    @include main-bg(var(--main-bg-img_portrait));
+                }
+
+                .content-actions {
+                    bottom: 50vmin;
+
+                    button {
+                        @include primary-button(30vmin, 15vmin, 10vmin, 10vmin);
+                        --shadow-size2: 60px;
+                    }
+
+                    .toggle-btn {
+                        width: 12vmin;
+                        height: 12vmin;
+                        padding: 2vmin;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border: 1px rgba(255, 255, 255, 0.15) solid;
+                        border-radius: 50%;
+                        background-color: rgba(0, 0, 0, 1);
+                        color: #666;
+                        position: absolute;
+                        right: -18vmin;
+                        z-index: 100;
+                        pointer-events: auto;
+
+                        svg {
+                            display: block;
+                            height: 100%;
+                            width: 100%;
+                        }
+                    }
+                }
+
+                &:first-child {
+                    &::after {
+                        @include main-bg(var(--main-bg-img_portrait));
+                    }
+
+                    .content-actions {
+                        bottom: 50vmin;
+
+                        button {
+                            @include primary-button(30vmin, 30vmin, 15vmin, 15vmin);
+                            --shadow-size2: 60px;
+                        }
+
+                        .toggle-btn {
+                            display: none;
+                            pointer-events: none;
+                        }
+                    }
+                }
+            }
+
+            @media screen and (min-width:768px) and (orientation: portrait) {
+                .content-actions {
+                    bottom: 30vmin;
+                }
+            }
+
+            @media screen and (orientation: landscape) {
+                //横屏
+                border-left: 1px solid #e7e7e7;
+                flex-direction: column;
+                flex: 0 0 35%;
+                min-width: 20vw;
+
+                .content-actions {
+                    bottom: 20vmin;
+                }
+
+                &::after {
+                    @include main-bg(var(--right-bg-img));
+                }
+
+                &:first-child {
+                    border-left: none;
+                    flex: 1 0 0%;
+
+                    &::after {
+                        @include main-bg(var(--main-bg-img));
+                    }
+
+                    .content-actions {
+                        bottom: 35vmin;
+                    }
+                }
+            }
+        }
+
+        .content-logs {
+            flex: 0;
+
+            @media screen and (orientation: landscape) {
+                //横屏
+                flex: 0 0 65%;
+            }
+
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+
+            &>div {
+                flex-grow: 1;
+            }
+
+            &>div.events {
+                overflow: hidden;
+            }
+
+            .events {
+                border-top: 1px solid #e7e7e7;
+                display: none;
+            }
+
+            .conversation {
+                min-height: 0;
+                overflow: hidden;
+            }
+        }
+    }
+
+    .conversation-item {
+        @include conversation-item(var(--user-sp-bg), var(--user-sp-border-color));
+
+        &.user {
+            --user-sp-bg: #eaffe6;
+            --user-sp-border-color: #c2ddbd;
+        }
+
+        &:not(:hover) .close {
+            display: none;
+        }
+
+        .close {
+            color: #aaa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 14px;
+            width: 14px;
+            cursor: default;
+            margin: 0 5px;
+
+            &:hover {
+                color: #d82a2a;
+            }
+
+            svg {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+
+    .event {
+        border-radius: 3px;
+        white-space: pre;
+        display: flex;
+        padding: 0px;
+        gap: 16px;
+
+        .event-timestamp {
+            text-align: left;
+            gap: 8px;
+            padding: 4px 0px;
+            width: 80px;
+            flex-shrink: 0;
+            margin-right: 16px;
+        }
+
+        .event-details {
+            display: flex;
+            flex-direction: column;
+            color: #18181b;
+            gap: 8px;
+
+            .event-summary {
+                padding: 4px 8px;
+                margin: 0px -8px;
+
+                &:hover {
+                    border-radius: 8px;
+                    background-color: #f0f0f0;
+                }
+
+                cursor: pointer;
+                display: flex;
+                gap: 8px;
+                align-items: center;
+
+                .event-source {
+                    flex-shrink: 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    &.client {
+                        color: #0099ff;
+                    }
+
+                    &.server {
+                        color: #009900;
+                    }
+
+                    &.error {
+                        color: #990000;
+                    }
+
+                    svg {
+                        stroke-width: 3;
+                        width: 12px;
+                        height: 12px;
+                    }
+                }
+            }
+        }
+    }
+
+    .visualization {
+        height: 100%;
+        display: flex;
+        z-index: 10;
+        position: relative;
+        align-items: center;
+        justify-content: center;
+
+        .visualization-entry {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            align-items: center;
+            padding-top: 10vmin;
+            flex-direction: column;
+
+            @media screen and (orientation: portrait) {
+                padding-top: 30vmin;
+            }
+
+            .sound-wave {
+                @include sound-wave(var(--sw-bg-color_01), var(--sw-bg-color_02), 10vmin);
+
+                @media screen and (orientation: portrait) {
+                    height: 20vmin;
+                }
+            }
+
+            .profile-pic {
+                @include profile-pic(30vmin, 30vmin, var(--profile-bg));
+
+                @media screen and (orientation: portrait) {
+                    width: 50vmin;
+                    height: 50vmin;
+                }
+
+                @media screen and (min-width:768px) and (orientation: portrait) {
+                    width: 30vmin;
+                    height: 30vmin;
+                }
+            }
+
+            &.client {
+                border-color: #76c776;
+                --sw-bg-color_01: 118, 199, 118;
+                --sw-bg-color_02: 102, 200, 55;
+            }
+
+            &.server {
+                border-color: #cb93f3;
+                --sw-bg-color_01: 203, 147, 243;
+                --sw-bg-color_02: 228, 0, 255;
+            }
+
+            canvas {
+                width: 100%;
+                height: 100%;
+                color: currentColor;
+            }
+        }
+    }
+
+    &.conversation {
+        .toggle-btn {
+            display: none !important;
+            pointer-events: none !important;
+        }
+
+        @media screen and (orientation: portrait) {
+            .content-main {
+                .content-logs {
+                    flex: 1 0 0%;
+
+                    .conversation {
+                        height: 100%;
+                        overflow: auto;
+                    }
+                }
+
+                .content-right {
+                    background-color: #f7f7fa;
+                    flex: 0 0 30vmin;
+
+                    .app-dash-content {
+                        left: 15px;
+                        transform: translateX(0);
+                        bottom: 11vmin;
+
+                        .app-button {
+                            min-width: 40px;
+
+                            .btn-icon {
+                                width: 26px;
+                                height: 26px;
+                                margin-bottom: 0;
+                            }
+
+                            .btn-text {
+                                background: none;
+                                color: #000;
+                            }
+
+                            &:hover {
+                                .btn-text {
+                                    color: #000;
+                                }
+                            }
+                        }
+                    }
+
+                    .visualization {
+                        .visualization-entry {
+                            &.client {
+                                --sw-bg-color_01: 247, 247, 250;
+                                --sw-bg-color_02: 102, 200, 55;
+                            }
+
+                            &.server {
+                                --sw-bg-color_01: 247, 247, 250;
+                                --sw-bg-color_02: 228, 0, 255;
+                            }
+
+                            .profile-pic {
+                                @media screen and (orientation: portrait) {
+                                    height: 6vmin;
+                                    width: 6vmin;
+                                    min-width: 42px;
+                                    min-height: 42px;
+                                    position: fixed;
+                                    bottom: 13vmin;
+                                    right: 30px;
+
+                                    @media screen and (min-width:768px) and (orientation: portrait) {
+                                        min-width: 60px;
+                                        min-height: 60px;
+                                        right: 60px;
+                                    }
+                                }
+                            }
+
+                            .sound-wave {
+                                height: 20vmin;
+                            }
+                        }
+                    }
+
+                    .content-actions {
+                        bottom: 13vmin;
+                        left: unset;
+                        right: 50px;
+
+                        button {
+                            box-shadow: none;
+                            animation: none;
+                            @include primary-button(25vmin, 6vmin, 6vmin, 6vmin);
+                            --shadow-size2: 60px;
+
+                            @media screen and (min-width:768px) and (orientation: portrait) {
+                                @include primary-button(20vmin, 10vmin, 8vmin, 8vmin);
+                                max-height: 60px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        @media screen and (min-width:768px) and (orientation: portrait) {
+            .content-main {
+                .content-right {
+                    .app-dash-content {
+                        left: 30px;
+                        bottom: 12vmin;
+
+                        .app-button {
+                            .btn-icon {
+                                width: 30px;
+                                height: 30px;
+                                margin-bottom: 0;
+                            }
+                        }
+                    }
+
+                    .content-actions {
+                        left: 50%;
+                        right: unset;
+                    }
+                }
+            }
+        }
+    }
+}
+
+[data-component='ConsolePage'].isConnected {
+    .content-right {
+        .app-dash-content {
+            @include app-dash-content_center;
+        }
+    }
+}
+
+[data-component='ConsolePage'].start {
+    .content-right {
+        &::after {
+            background-image: none;
+        }
+
+        .app-dash-content {
+            @include app-dash-content_center;
+        }
+    }
+
+    .visualization-entry {
+        &.client {
+            display: none;
+        }
+
+        &.server {
+            display: flex;
+        }
+    }
+
+    --profile-bg: profile-bg_01;
+}
+
+[data-component='ConsolePage'].stop,
+[data-component='ConsolePage'].interrupt {
+    .content-right {
+        &::after {
+            background-image: none;
+        }
+
+        .app-dash-content {
+            @include app-dash-content_center;
+        }
+    }
+
+    .visualization-entry {
+        &.client {
+            display: flex;
+        }
+
+        &.server {
+            display: none;
+        }
+    }
+
+    --profile-bg: profile-bg_02;
+}
+
+@keyframes profile-bg_01 {
+    0% {
+        background-color: #cb93f3;
+    }
+
+    50% {
+        background-color: #ba00ff;
+    }
+
+    100% {
+        background-color: #cb93f3;
+    }
+}
+
+@keyframes profile-bg_02 {
+    0% {
+        background-color: #6ddd00;
+    }
+
+    50% {
+        background-color: #86ff86;
+    }
+
+    100% {
+        background-color: #6ddd00;
+    }
+}
+
+// .ctrl-key .configuration-button:hover>*{
+//     display: block;
+// }
+
+dialog:-internal-dialog-in-top-layer::backdrop {
+    background-color: rgba(0, 0, 0, 0.85);
+}
+
+.connecting-dots {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+
+    span {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: currentColor;
+        animation: connecting-dot 1.4s ease-in-out infinite;
+
+        &:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        &:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+    }
+}
+
+.configuration-dialog {
+    margin: auto;
+    width: 80%;
+    height: 80%;
+    border-radius: 8px;
+    z-index: 1001;
+    width: 80%;
+    height: 80%;
+    border-radius: 8px;
+    z-index: 1001;
+    background-color: #1a2231;
+    border: solid 1px rgba(255, 255, 255, 0.2);
+    padding: 0;
+    overflow: hidden;
+
+    @media screen and (max-width:767px) and (orientation: portrait) {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+    }
+
+    .dialog-content {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        header {
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-bottom: solid 1px rgba(255, 255, 255, 0.2);
+            color: #fff;
+
+            label {
+                font-size: 1.1em;
+                font-weight: bold;
+                color: #999;
+                text-transform: uppercase
+            }
+
+            a {
+                color: #fff;
+                cursor: pointer;
+
+                &:hover {
+                    color: #e60000;
+                }
+            }
+        }
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-top: solid 1px rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            @media screen and (max-width:767px) and (orientation: portrait) {
+                justify-content: center;
+            }
+
+            button {
+                min-height: unset;
+                max-height: 40px;
+                font-size: 1.2em;
+                color: #fff;
+
+                &.ok {
+                    background-color: #25792b;
+                    margin-right: 15px;
+
+                    &:hover {
+                        background-color: #006208;
+                    }
+                }
+
+                &.cancel {
+                    background-color: #9b0000;
+
+                    &:hover {
+                        background-color: #710a0a;
+                    }
+                }
+            }
+        }
+
+        main {
+            flex-grow: 1;
+            padding: 20px;
+            overflow: auto;
+            color: #ccc;
+
+            @media screen and (max-width:767px) and (orientation: portrait) {
+                padding: 10px;
+            }
+        }
+
+        .form {
+            &-wrap {
+                box-sizing: border-box;
+            }
+
+            &-item {
+                display: flex;
+                justify-content: flex-start;
+                align-items: flex-start;
+                align-content: flex-start;
+                flex-flow: wrap;
+                margin-bottom: 40px;
+                position: relative;
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    bottom: -20px;
+                    left: 0;
+                    right: 0;
+                    height: 1px;
+                    box-sizing: border-box;
+                    border-top: 1px #4d5568 dotted;
+                }
+
+                &:last-child {
+                    margin-bottom: 0;
+
+                    &::after {
+                        display: none;
+                    }
+                }
+
+                .label-box {
+                    font-weight: bold;
+                    margin-bottom: 6px;
+                }
+
+                &_bd {
+                    box-sizing: border-box;
+                    flex: 0 0 50%;
+
+                    input,
+                    textarea,
+                    select {
+                        width: 100%;
+                        background-color: rgba(0, 0, 0, 1);
+                        color: #ccc;
+                        border: none;
+
+                        &:hover,
+                        &:focus {
+                            background-color: rgba(0, 0, 0, 0.75);
+                            outline: 1px #305875 solid;
+                            color: #fff;
+                        }
+                    }
+
+                    textarea {
+                        min-height: 90px;
+                    }
+
+                    /* 隐藏Chrome、Safari、Edge和Opera的箭头 */
+                    input[type='number']::-webkit-inner-spin-button,
+                    input[type='number']::-webkit-outer-spin-button {
+                        -webkit-appearance: none;
+                        margin: 0;
+                        /* 此属性在某些情况下可能需要 */
+                    }
+
+                    /* 隐藏Firefox的箭头 */
+                    input[type="number"] {
+                        -moz-appearance: textfield;
+                    }
+
+                    input[type=range] {
+                        -webkit-appearance: none;
+                        /* 清除默认样式 */
+                        width: calc(100% - 60px);
+                        /* 设置宽度 */
+                        height: 6px;
+                        /* 设置高度 */
+                        background: #999;
+                        /* 初始轨道颜色 */
+                        outline: none;
+                        /* 移除外框 */
+                        border-radius: 5px;
+                        /* 圆角 */
+                        transition: background 0.3s;
+                        /* 添加过渡效果 */
+                        margin-right: 10px;
+                        vertical-align: middle;
+
+                        &:hover {
+                            background: #00fcff;
+                        }
+
+                        &::-webkit-slider-thumb {
+                            -webkit-appearance: none;
+                            /* 去掉默认样式 */
+                            width: 16px;
+                            /* 滑块宽度 */
+                            height: 16px;
+                            /* 滑块高度 */
+                            background: #fff;
+                            /* 滑块颜色 */
+                            border-radius: 50%;
+                            /* 圆形滑块 */
+                            cursor: pointer;
+                            /* 鼠标变成手型 */
+                            transition: background 0.3s;
+
+                            &:hover {
+                                background: #fff;
+                            }
+                        }
+                    }
+                }
+
+                .explain-box {
+                    padding-left: 30px;
+                    flex: 1;
+
+                    p {
+                        padding-left: 20px;
+                        position: relative;
+                        margin-bottom: 10px;
+                        font-size: 0.9em;
+                        color: #999;
+
+                        &:last-child {
+                            margin-bottom: 0;
+                        }
+
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            left: 5px;
+                            top: 8px;
+                            width: 6px;
+                            height: 6px;
+                            background-color: #63636a;
+                            border-radius: 50%;
+                        }
+                    }
+                }
+
+                @media screen and (orientation: portrait) {
+                    display: block;
+
+                    .explain-box {
+                        padding: 0;
+                        margin-top: 10px;
+                    }
+                }
+            }
+        }
+    }
+}

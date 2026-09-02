@@ -1,10 +1,12 @@
 # OpenAI Realtime Console
 
+*[中文说明](./README.zh-CN.md)*
+
 This is an example application showing how to use the [OpenAI Realtime API](https://platform.openai.com/docs/guides/realtime) with [WebRTC](https://platform.openai.com/docs/guides/realtime-webrtc).
 
 ## Installation and usage
 
-Before you begin, you'll need an OpenAI API key - [create one in the dashboard here](https://platform.openai.com/settings/api-keys). Create a `.env` file from the example file and set your API key in there:
+This fork has no server of its own. Connection setup, session configuration, dynamic tools and session records all come from your own backend, so there is no OpenAI API key in this repo. Create a `.env` from the example file and read the comments in there — the only variable you normally need locally is `API_PROXY_TARGET`:
 
 ```bash
 cp .env.example .env
@@ -16,15 +18,19 @@ Running this application locally requires [Node.js](https://nodejs.org/) to be i
 npm install
 ```
 
-Start the application server with:
+Start the dev server with:
 
 ```bash
 npm run dev
 ```
 
-This should start the console application on [http://localhost:3000](http://localhost:3000).
+This should start the console application on [http://localhost:5173](http://localhost:5173). In development the page and the backend live on different origins and every call sends cookies, so [`vite.config.js`](./vite.config.js) proxies `/api` to `API_PROXY_TARGET` instead of relying on CORS.
 
-This application is a minimal template that uses [express](https://expressjs.com/) to serve the React frontend contained in the [`/client`](./client) folder. The server is configured to use [vite](https://vitejs.dev/) to build the React frontend.
+```bash
+npm run build
+```
+
+builds the React frontend in [`/client`](./client) into `dist/` as a plain static bundle — drop it wherever it is served from the same origin as `/api`, and no proxy is needed.
 
 This application shows how to send and receive Realtime API events over the WebRTC data channel and configure client-side function calling. You can also view the JSON payloads for client and server events using the logging panel in the UI.
 
